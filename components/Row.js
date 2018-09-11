@@ -11,7 +11,11 @@ const row = ( props ) => {
         props.checkCouple({ element: el, cellIndex: cellIndex, arrayRowIndex: props.index })
       }} 
         key={cellIndex} 
-        style={styles.numberContainer}
+        style={
+          el.shown ?
+          styles.foundNumberContainer :
+          styles.numberContainer
+        }
       >
         {el.shown ? <Text>{el.value}</Text> : <Text>?</Text>}
       </TouchableOpacity>
@@ -40,6 +44,14 @@ const styles = StyleSheet.create({
   },
   numberContainer: {
     backgroundColor: 'grey',
+    paddingBottom: 8,
+    paddingTop: 8,
+    paddingLeft: 8,
+    paddingRight:  8,
+    borderRadius: 90,
+  },
+  foundNumberContainer: {
+    backgroundColor: 'red',
     paddingBottom: 8,
     paddingTop: 8,
     paddingLeft: 8,

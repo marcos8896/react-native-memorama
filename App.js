@@ -118,7 +118,14 @@ export default class App extends Component {
   }
 
   generateEmptyBaseArray = () => {
-    return [...Array(parseInt(this.state.rows * this.state.columns / 2)).keys()];
+    const cont = parseInt(this.state.rows * this.state.columns / 2);
+    
+    const auxArray = [];
+
+    for (let i = 0; i < cont; i++)
+      auxArray.push(i);
+
+    return auxArray;
   }
 
   shuffle = (array) => {
@@ -149,7 +156,7 @@ export default class App extends Component {
       const auxArray = [ 
         ...baseArray.slice(i * this.state.columns, (i * this.state.columns) + this.state.columns) 
       ];
-
+      
       const completeAuxArray = auxArray.map(el => {
         return {
           value: el,
@@ -157,10 +164,11 @@ export default class App extends Component {
           found: false,
         }
       })
-
+      
       gridAuxArray.push(this.shuffle(completeAuxArray));
     }
-
+    
+    console.log('gridAuxArray: ', gridAuxArray);
     const gridMixArray = this.shuffle(gridAuxArray);
     console.log('gridMixArray: ', gridMixArray);
 
