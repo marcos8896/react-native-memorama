@@ -1,27 +1,26 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Dimensions} from 'react-native';
+import {Platform, StyleSheet, Text, View, Dimensions, TouchableOpacity, Alert} from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
-const row = props => {
+const row = ( props ) => {
   
-  /*const generatedElements = props.basedArray.map((el, index) => {
+  const generatedElements = props.rowArray.map((el, cellIndex) => {
     return (
-      <View 
-        key={index} 
+      <TouchableOpacity onPress={() => {
+        props.checkCouple({ element: el, cellIndex: cellIndex, arrayRowIndex: props.index })
+      }} 
+        key={cellIndex} 
         style={styles.numberContainer}
       >
-        <Text>{el}</Text>
-      </View>
+        {el.shown ? <Text>{el.value}</Text> : <Text>?</Text>}
+      </TouchableOpacity>
     );
-  });*/
+  });
   
   return (
     <View style={styles.rowContainer}>
-
-      <Text>Ya se genera el gridArray</Text>
-      {/*generatedElements*/}
-
+      {generatedElements}
     </View>
   );
 }
@@ -40,11 +39,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5FCFF',
   },
   numberContainer: {
-    backgroundColor: 'red',
-    paddingBottom: 5,
-    paddingTop: 5,
-    paddingLeft: 5,
-    paddingRight:  5,
+    backgroundColor: 'grey',
+    paddingBottom: 8,
+    paddingTop: 8,
+    paddingLeft: 8,
+    paddingRight:  8,
+    borderRadius: 90,
   }
 
 });

@@ -6,13 +6,95 @@ import Row from './components/Row';
 export default class App extends Component {
 
   state = {
-    columns: 3,
     rows: 2,
+    columns: 4,
     gridArray: [],
+    auxElement: null,
+  }
+
+  componentDidMount() {
+    this.generateGridArray();
+  }
+
+  showPressElement = ( pressed ) => {
+    
+    const gridArray = [ ...this.state.gridArray ];
+    const pressedElementArrayRow = [ ...gridArray[pressed.arrayRowIndex] ];
+    console.log('pressedElementArrayRow: ', pressedElementArrayRow);
+    const pressedElement = { ...pressedElementArrayRow[pressed.cellIndex] };
+    
+    const updatedElement = { ...pressedElement, shown: true };
+    console.log('updatedElement: ', updatedElement);
+    const pressedElementUpdatedArrayRow = 
+    pressedElementArrayRow.slice(0, pressed.cellIndex)
+    .concat([updatedElement])
+    .concat(pressedElementArrayRow.slice(pressed.cellIndex + 1))
+    /*[
+      ...pressedElementArrayRow.slice(0, pressed.cellIndex),
+      updatedElement,
+      ...pressedElementArrayRow.slice(pressed.cellIndex + 1),
+    ]
+    */
+   const updatedGridArray = 
+   gridArray.slice(0, pressed.arrayRowIndex)
+   .concat([pressedElementUpdatedArrayRow])
+   .concat(gridArray.slice(pressed.cellIndex + 1))
+   /*[
+     ...gridArray.slice(0, pressed.arrayRowIndex),
+     pressedElementUpdatedArrayRow,
+     ...gridArray.slice(pressed.cellIndex + 1),
+    ]*/
+    console.log('gridArray: ', gridArray);
+    console.log('updatedGridArray', updatedGridArray)
+    return updatedGridArray;
+
+  }
+
+  changePressElementState = ( prevStateGridArray, pressed, propertyToChange ) => {
+
+    return prevStateGridArray.map( (arrayRow, index) => {
+            
+      if(pressed.arrayRowIndex === index) {
+        return arrayRow.map( (cell, cellIndex) => {
+          
+          if(pressed.cellIndex === cellIndex) {
+            console.log("cell", cell)
+            return {...cell, [propertyToChange.property]: propertyToChange.value }
+          } else {
+            return cell;
+          }
+
+        })
+      } else {
+        return arrayRow;
+      }
+
+    })
+
+  }
+
+  checkCouple = ( pressed ) => {
+    
+    console.log("Ah perro", pressed);
+    //if(this.state.auxElement === null) {
+      this.setState((prevState) => {
+
+        return { 
+          auxElement: pressed.element,
+          gridArray: this.changePressElementState(
+            prevState.gridArray, 
+            pressed, 
+            { property: 'shown', value: true }
+          ),
+        }
+      });
+    //} else {
+     // console.log("en el else", this.state.auxElement)
+    //}
   }
 
   generateEmptyBaseArray = () => {
-    return [...Array(parseInt(this.state.columns * this.state.rows / 2)).keys()];
+    return [...Array(parseInt(this.state.rows * this.state.columns / 2)).keys()];
   }
 
   shuffle = (array) => {
@@ -39,14 +121,15 @@ export default class App extends Component {
     const baseArray = [...this.generateEmptyBaseArray(), ...this.generateEmptyBaseArray()];
     const gridAuxArray = [];
     
-    for (let i = 0; i < this.state.columns; i++) {
+    for (let i = 0; i < this.state.rows; i++) {
       const auxArray = [ 
-        ...baseArray.slice(i * this.state.rows, (i * this.state.rows) + this.state.rows) 
+        ...baseArray.slice(i * this.state.columns, (i * this.state.columns) + this.state.columns) 
       ];
 
       const completeAuxArray = auxArray.map(el => {
         return {
           value: el,
+          shown: false,
           found: false,
         }
       })
@@ -56,16 +139,20 @@ export default class App extends Component {
 
     const gridMixArray = this.shuffle(gridAuxArray);
     console.log('gridMixArray: ', gridMixArray);
+
+    this.setState({ gridArray: gridMixArray, });
     
   }
 
   render() {
-
-    this.generateGridArray();
+    
     return (
       <View style={styles.container}>
         
-        <Row numberCells={3} />
+        {this.state.gridArray.map( (rowArray, index) => {
+        return <Row checkCouple={this.checkCouple} rowArray={rowArray} key={index} index={index} />;
+        })}
+
 
       </View>
     );
