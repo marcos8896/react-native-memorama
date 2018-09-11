@@ -9,7 +9,7 @@ export default class App extends Component {
     rows: 2,
     columns: 4,
     gridArray: [],
-    auxElement: null,
+    previousPressed: null,
   }
 
   componentDidMount() {
@@ -54,43 +54,67 @@ export default class App extends Component {
 
     return prevStateGridArray.map( (arrayRow, index) => {
             
-      if(pressed.arrayRowIndex === index) {
-        return arrayRow.map( (cell, cellIndex) => {
+        if(index === pressed.arrayRowIndex) {
+          return arrayRow.map( (cell, cellIndex) => {
           
-          if(pressed.cellIndex === cellIndex) {
-            console.log("cell", cell)
-            return {...cell, [propertyToChange.property]: propertyToChange.value }
-          } else {
-            return cell;
-          }
-
-        })
-      } else {
-        return arrayRow;
-      }
+            if(pressed.cellIndex === cellIndex) {
+              return {...cell, [propertyToChange.property]: propertyToChange.value }
+            } else {
+              return cell;
+            }
+  
+          })
+        } else {
+          return arrayRow;
+        }
 
     })
 
   }
 
   checkCouple = ( pressed ) => {
-    
-    console.log("Ah perro", pressed);
-    //if(this.state.auxElement === null) {
-      this.setState((prevState) => {
 
+    if(this.state.previousPressed === null) {
+      //If there is not previous pressed, set it and show the 
+      //selected card.
+      this.setState((prevState) => {
         return { 
-          auxElement: pressed.element,
+          previousPressed: pressed,
           gridArray: this.changePressElementState(
             prevState.gridArray, 
             pressed, 
             { property: 'shown', value: true }
           ),
         }
-      });
-    //} else {
-     // console.log("en el else", this.state.auxElement)
-    //}
+      }, () => console.log("No había prev", this.state));
+
+    } else if(this.state.previousPressed.element.value === pressed.element.value) {
+      //If there is a previous pressed and the next pressed have the same value
+      //Then, show both cards.
+      this.setState((prevState) => {
+        return { 
+          previousPressed: null,
+          gridArray: this.changePressElementState(
+            prevState.gridArray, 
+            pressed,
+            { property: 'shown', value: true }
+          ),
+        }
+      }, () => console.log("le atino", this.state));
+    } else if(this.state.previousPressed.element.value !== pressed.element.value) {
+      //If there is a previous pressed and the next pressed have not the same value
+      //Then, hide both.
+      this.setState((prevState) => {
+        return { 
+          previousPressed: null,
+          gridArray: this.changePressElementState(
+            prevState.gridArray, 
+            prevState.previousPressed, 
+            { property: 'shown', value: false }
+          ),
+        }
+      }, () => console.log("no le atino", this.state));
+    }   
   }
 
   generateEmptyBaseArray = () => {
@@ -144,15 +168,18 @@ export default class App extends Component {
     
   }
 
+  renderGrid = () => {
+    return this.state.gridArray.map( (rowArray, index) => {
+      return <Row checkCouple={this.checkCouple} rowArray={rowArray} key={index} index={index} />;
+    })
+  }
+
   render() {
     
     return (
       <View style={styles.container}>
         
-        {this.state.gridArray.map( (rowArray, index) => {
-        return <Row checkCouple={this.checkCouple} rowArray={rowArray} key={index} index={index} />;
-        })}
-
+        {this.renderGrid()}
 
       </View>
     );
