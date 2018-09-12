@@ -1,8 +1,6 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Dimensions, TouchableOpacity, Alert} from 'react-native';
 
-const { width, height } = Dimensions.get('window');
-
 const row = ( props ) => {
   
   const generatedElements = props.rowArray.map((el, cellIndex) => {
@@ -36,7 +34,7 @@ export default row;
 const styles = StyleSheet.create({
   rowContainer: {
     flex: 1,
-    width: width,
+    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',

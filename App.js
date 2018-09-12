@@ -3,9 +3,6 @@ import { Dimensions, StyleSheet, Button, View, Text } from 'react-native';
 
 import Row from './components/Row';
 
-const { width, height } = Dimensions.get('window');
-
-
 export default class App extends Component {
 
   state = {
@@ -164,20 +161,7 @@ export default class App extends Component {
       <View style={styles.outerContainer}>
         
         <View style={styles.buttonContainer}>
-          <Button
-            onPress={() => {
-              if(this.state.columns <= 8) 
-                this.setState((prevState) => {
-                  return {
-                    columns: prevState.columns + 2,
-                  }
-                })
-            }}
-            title="Más columnas"
-            color="#841584"
-            accessibilityLabel="Learn more about this purple button"
-          />
-          <Text>{this.state.columns}</Text>
+          
           <Button
             onPress={() => {
               if(this.state.columns >= 4) 
@@ -191,33 +175,51 @@ export default class App extends Component {
             color="#841584"
             accessibilityLabel="Learn more about this purple button"
           />
-        </View>
-        
-        <View style={styles.buttonContainer}>
+          <Text>{this.state.columns}</Text>
           <Button
             onPress={() => {
-              if(this.state.rows <= 8) 
+              if(this.state.columns <= 8) 
                 this.setState((prevState) => {
                   return {
-                    rows: prevState.rows + 2,
+                    columns: prevState.columns + 2,
                   }
                 })
             }}
-            title="Más filas"
+            title="Más columnas"
             color="#841584"
             accessibilityLabel="Learn more about this purple button"
           />
-          <Text>{this.state.rows}</Text>
+
+        </View>
+        
+        <View style={styles.buttonContainer}>
+          
           <Button
             onPress={() => {
               if(this.state.rows >= 4) 
                 this.setState((prevState) => {
                   return {
                     rows: prevState.rows - 2,
+                    previousPressed: null,
                   }
                 })
             }}
             title="Menos filas"
+            color="#841584"
+            accessibilityLabel="Learn more about this purple button"
+          />
+          <Text>{this.state.rows}</Text>
+          <Button
+            onPress={() => {
+              if(this.state.rows <= 8) 
+                this.setState((prevState) => {
+                  return {
+                    rows: prevState.rows + 2,
+                    previousPressed: null,
+                  }
+                })
+            }}
+            title="Más filas"
             color="#841584"
             accessibilityLabel="Learn more about this purple button"
           />
@@ -242,7 +244,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flex: 1,
-    width: width,
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
@@ -251,7 +253,7 @@ const styles = StyleSheet.create({
   },
   outerContainer: {
     flex: 1,
-    width: width,
+    width: '100%',
     alignItems: 'flex-start',
     backgroundColor: '#F5FCFF',
   }
