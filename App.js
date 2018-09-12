@@ -45,48 +45,59 @@ export default class App extends Component {
 
   }
 
+  setFirstSelection = ( pressed ) => {
+    this.setState((prevState) => {
+      return { 
+        previousPressed: pressed,
+        gridArray: this.changePressElementState(
+          prevState.gridArray, 
+          pressed, 
+          { property: 'shown', value: true }
+        ),
+      }
+    }, () => console.log("No había prev", this.state));
+  }
+
+  showBothCards = ( pressed ) => {
+    this.setState((prevState) => {
+      return { 
+        previousPressed: null,
+        gridArray: this.changePressElementState(
+          prevState.gridArray, 
+          pressed,
+          { property: 'shown', value: true }
+        ),
+      }
+    }, () => console.log("le atino", this.state));
+  }
+
+  resetSelectedCards = ( pressed ) => {
+    this.setState((prevState) => {
+      return { 
+        previousPressed: null,
+        gridArray: this.changePressElementState(
+          prevState.gridArray, 
+          prevState.previousPressed, 
+          { property: 'shown', value: false }
+        ),
+      }
+    }, () => console.log("no le atino", this.state));
+  }
   checkCouple = ( pressed ) => {
 
     if(this.state.previousPressed === null) {
       //If there is not previous pressed, set it and show the 
       //selected card.
-      this.setState((prevState) => {
-        return { 
-          previousPressed: pressed,
-          gridArray: this.changePressElementState(
-            prevState.gridArray, 
-            pressed, 
-            { property: 'shown', value: true }
-          ),
-        }
-      }, () => console.log("No había prev", this.state));
+      this.setFirstSelection( pressed );
 
     } else if(this.state.previousPressed.element.value === pressed.element.value) {
       //If there is a previous pressed and the next pressed have the same value
       //Then, show both cards.
-      this.setState((prevState) => {
-        return { 
-          previousPressed: null,
-          gridArray: this.changePressElementState(
-            prevState.gridArray, 
-            pressed,
-            { property: 'shown', value: true }
-          ),
-        }
-      }, () => console.log("le atino", this.state));
+      this.showBothCards( pressed );
     } else if(this.state.previousPressed.element.value !== pressed.element.value) {
       //If there is a previous pressed and the next pressed have not the same value
       //Then, hide both.
-      this.setState((prevState) => {
-        return { 
-          previousPressed: null,
-          gridArray: this.changePressElementState(
-            prevState.gridArray, 
-            prevState.previousPressed, 
-            { property: 'shown', value: false }
-          ),
-        }
-      }, () => console.log("no le atino", this.state));
+      this.resetSelectedCards( pressed );
     }   
   }
 
