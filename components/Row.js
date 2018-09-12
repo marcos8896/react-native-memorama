@@ -6,7 +6,9 @@ const row = ( props ) => {
   const generatedElements = props.rowArray.map((el, cellIndex) => {
     return (
       <TouchableOpacity onPress={() => {
-        props.checkCouple({ element: el, cellIndex: cellIndex, arrayRowIndex: props.index })
+        if(!el.shown) {
+          props.checkCouple({ element: el, cellIndex: cellIndex, arrayRowIndex: props.index })
+        }
       }} 
         key={cellIndex} 
         style={
