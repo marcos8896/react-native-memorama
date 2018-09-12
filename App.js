@@ -1,12 +1,15 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import { Dimensions, StyleSheet, Button, View, Text } from 'react-native';
 
 import Row from './components/Row';
+
+const { width, height } = Dimensions.get('window');
+
 
 export default class App extends Component {
 
   state = {
-    rows: 2,
+    rows: 4,
     columns: 4,
     gridArray: [],
     previousPressed: null,
@@ -16,37 +19,10 @@ export default class App extends Component {
     this.generateGridArray();
   }
 
-  showPressElement = ( pressed ) => {
-    
-    const gridArray = [ ...this.state.gridArray ];
-    const pressedElementArrayRow = [ ...gridArray[pressed.arrayRowIndex] ];
-    console.log('pressedElementArrayRow: ', pressedElementArrayRow);
-    const pressedElement = { ...pressedElementArrayRow[pressed.cellIndex] };
-    
-    const updatedElement = { ...pressedElement, shown: true };
-    console.log('updatedElement: ', updatedElement);
-    const pressedElementUpdatedArrayRow = 
-    pressedElementArrayRow.slice(0, pressed.cellIndex)
-    .concat([updatedElement])
-    .concat(pressedElementArrayRow.slice(pressed.cellIndex + 1))
-    /*[
-      ...pressedElementArrayRow.slice(0, pressed.cellIndex),
-      updatedElement,
-      ...pressedElementArrayRow.slice(pressed.cellIndex + 1),
-    ]
-    */
-   const updatedGridArray = 
-   gridArray.slice(0, pressed.arrayRowIndex)
-   .concat([pressedElementUpdatedArrayRow])
-   .concat(gridArray.slice(pressed.cellIndex + 1))
-   /*[
-     ...gridArray.slice(0, pressed.arrayRowIndex),
-     pressedElementUpdatedArrayRow,
-     ...gridArray.slice(pressed.cellIndex + 1),
-    ]*/
-    console.log('gridArray: ', gridArray);
-    console.log('updatedGridArray', updatedGridArray)
-    return updatedGridArray;
+  componentDidUpdate(prevProps, prevState) {
+
+    if(prevState.columns !== this.state.columns || prevState.rows !== this.state.rows)
+      this.generateGridArray();
 
   }
 
@@ -185,9 +161,71 @@ export default class App extends Component {
   render() {
     
     return (
-      <View style={styles.container}>
+      <View style={styles.outerContainer}>
         
-        {this.renderGrid()}
+        <View style={styles.buttonContainer}>
+          <Button
+            onPress={() => {
+              if(this.state.columns <= 8) 
+                this.setState((prevState) => {
+                  return {
+                    columns: prevState.columns + 2,
+                  }
+                })
+            }}
+            title="Más columnas"
+            color="#841584"
+            accessibilityLabel="Learn more about this purple button"
+          />
+          <Text>{this.state.columns}</Text>
+          <Button
+            onPress={() => {
+              if(this.state.columns >= 4) 
+                this.setState((prevState) => {
+                  return {
+                    columns: prevState.columns - 2,
+                  }
+                })
+            }}
+            title="Menos columnas"
+            color="#841584"
+            accessibilityLabel="Learn more about this purple button"
+          />
+        </View>
+        
+        <View style={styles.buttonContainer}>
+          <Button
+            onPress={() => {
+              if(this.state.rows <= 8) 
+                this.setState((prevState) => {
+                  return {
+                    rows: prevState.rows + 2,
+                  }
+                })
+            }}
+            title="Más filas"
+            color="#841584"
+            accessibilityLabel="Learn more about this purple button"
+          />
+          <Text>{this.state.rows}</Text>
+          <Button
+            onPress={() => {
+              if(this.state.rows >= 4) 
+                this.setState((prevState) => {
+                  return {
+                    rows: prevState.rows - 2,
+                  }
+                })
+            }}
+            title="Menos filas"
+            color="#841584"
+            accessibilityLabel="Learn more about this purple button"
+          />
+        </View>
+        
+        <View style={styles.container}>
+          {this.renderGrid()}
+        </View>
 
       </View>
     );
@@ -197,18 +235,24 @@ export default class App extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexGrow: 5,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
+  buttonContainer: {
+    flex: 1,
+    width: width,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    backgroundColor: '#F5FCFF',
+    height: 20,
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+  outerContainer: {
+    flex: 1,
+    width: width,
+    alignItems: 'flex-start',
+    backgroundColor: '#F5FCFF',
+  }
 });
