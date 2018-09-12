@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     borderRadius: 90,
   },
   foundNumberContainer: {
-    backgroundColor: 'red',
+    backgroundColor: '#ff9800',
     paddingBottom: 8,
     paddingTop: 8,
     paddingLeft: 8,

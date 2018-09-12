@@ -11,6 +11,7 @@ export default class App extends Component {
     gridArray: [],
     previousPressed: null,
     waitingForHideIncorrectCards: false,
+    points: 0,
   }
 
   componentDidMount() {
@@ -61,7 +62,8 @@ export default class App extends Component {
 
   showBothCards = ( pressed ) => {
     this.setState((prevState) => {
-      return { 
+      return {
+        points: prevState.points + 1, 
         previousPressed: null,
         gridArray: this.changePressElementState(
           prevState.gridArray, 
@@ -107,7 +109,7 @@ export default class App extends Component {
             }
           })
         })
-      }, 25)
+      }, 600)
 
     })
   }
@@ -189,7 +191,7 @@ export default class App extends Component {
     
     const gridMixArray = this.shuffle(gridAuxArray);
 
-    this.setState({ gridArray: gridMixArray, });
+    this.setState({ gridArray: gridMixArray, points: 0 });
     
   }
 
@@ -197,6 +199,12 @@ export default class App extends Component {
     return this.state.gridArray.map( (rowArray, index) => {
       return <Row checkCouple={this.checkCouple} rowArray={rowArray} key={index} index={index} />;
     })
+  }
+
+  isValidGrid = () => {
+    const { rows, columns } = this.state;
+    const total = rows + columns;
+    return total > 3;
   }
 
   render() {
@@ -208,29 +216,33 @@ export default class App extends Component {
           
           <Button
             onPress={() => {
-              if(this.state.columns >= 4) 
+              if(this.state.columns >= 2 && 
+                !this.state.waitingForHideIncorrectCards &&
+                this.isValidGrid()) 
                 this.setState((prevState) => {
                   return {
-                    columns: prevState.columns - 2,
+                    columns: prevState.columns - 1,
                   }
                 })
             }}
             title="Menos columnas"
-            color="#841584"
+            color="#2196f3"
             accessibilityLabel="Learn more about this purple button"
           />
           <Text>{this.state.columns}</Text>
           <Button
             onPress={() => {
-              if(this.state.columns <= 8) 
+              if(this.state.columns <= 9 && 
+                !this.state.waitingForHideIncorrectCards
+              ) 
                 this.setState((prevState) => {
                   return {
-                    columns: prevState.columns + 2,
+                    columns: prevState.columns + 1,
                   }
                 })
             }}
             title="Más columnas"
-            color="#841584"
+            color="#2196f3"
             accessibilityLabel="Learn more about this purple button"
           />
 
@@ -240,34 +252,47 @@ export default class App extends Component {
           
           <Button
             onPress={() => {
-              if(this.state.rows >= 4) 
+              if(
+                this.state.rows >= 2 && 
+                !this.state.waitingForHideIncorrectCards &&
+                this.isValidGrid()
+              ) 
                 this.setState((prevState) => {
                   return {
-                    rows: prevState.rows - 2,
+                    rows: prevState.rows - 1,
                     previousPressed: null,
                   }
                 })
             }}
             title="Menos filas"
-            color="#841584"
+            color="#2196f3"
             accessibilityLabel="Learn more about this purple button"
           />
           <Text>{this.state.rows}</Text>
           <Button
             onPress={() => {
-              if(this.state.rows <= 8) 
+              if(
+                this.state.rows <= 9 && 
+                !this.state.waitingForHideIncorrectCards
+              ) 
                 this.setState((prevState) => {
                   return {
-                    rows: prevState.rows + 2,
+                    rows: prevState.rows + 1,
                     previousPressed: null,
                   }
                 })
             }}
             title="Más filas"
-            color="#841584"
+            color="#2196f3"
             accessibilityLabel="Learn more about this purple button"
           />
         </View>
+
+        { 
+          parseInt(this.state.rows * this.state.columns / 2) === this.state.points ?
+          <Text style={{ alignSelf: 'center' }}>¡GANASTE con {this.state.points} puntos!</Text> :
+          <Text style={{ alignSelf: 'center' }}>Llevas {this.state.points} puntos - Marcos Barrera del Río</Text>
+        }
         
         <View style={styles.container}>
           {this.renderGrid()}
